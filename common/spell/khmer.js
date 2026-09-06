@@ -267,7 +267,18 @@
 			return true;
 
 		let analysis = this.analyze(word);
-		return !analysis || !analysis.diagnostics || 0 === analysis.diagnostics.length;
+		if (!analysis)
+			return true;
+		if (analysis.diagnostics && 0 < analysis.diagnostics.length)
+			return false;
+
+		let segments = analysis.segments || [];
+		for (let i = 0; i < segments.length; ++i)
+		{
+			if (true === segments[i].isUnknown || false === segments[i].spellingValid)
+				return false;
+		}
+		return true;
 	};
 	CKhmerSpellchecker.prototype.suggest = function(word)
 	{

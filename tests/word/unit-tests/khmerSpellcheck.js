@@ -53,6 +53,24 @@ QUnit.module("Khmer WASM spellcheck", function(hooks)
 		assert.strictEqual(suggestions[0], "សរសេរ");
 	});
 
+	QUnit.test("rejects unknown segments without diagnostic records", function(assert)
+	{
+		let text = "ការពិត្យាចុមមិចបានអតលោតអេរឺចឹងស្តី";
+		let parts = spellchecker.getWordParts(text);
+		let unknownWords = parts.filter(function(part)
+		{
+			return "ពិត្យាចុ" === part.word || "អេរឺចឹ" === part.word;
+		});
+
+		assert.strictEqual(unknownWords.length, 2, "Unknown source ranges are preserved");
+		assert.strictEqual(spellchecker.checkWord("ពិត្យាចុ"), false,
+			"Unknown segment is misspelled even without a diagnostic record");
+		assert.strictEqual(spellchecker.checkWord("អេរឺចឹ"), false,
+			"Second unknown segment is also rejected");
+		assert.strictEqual(spellchecker.checkWord("មិច"), true,
+			"Dictionary-valid segment remains accepted");
+	});
+
 	QUnit.test("maps segmented words across formatting runs", function(assert)
 	{
 		let previousGetter = AscCommon.getKhmerSpellchecker;
