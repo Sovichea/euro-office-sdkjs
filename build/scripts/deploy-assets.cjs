@@ -31,7 +31,7 @@ const licenseText = buildLicenseHeader(BUILD_DIR, { stripSentinel: true });
 // JS files skipped from individual minification (same as ignoreFiles in Gruntfile.js)
 const IGNORE_NAMES = new Set([
     'jquery_native', 'fonts_ie', 'spell_ie', 'engine_ie',
-    'zlib_ie', 'drawingfile_ie', 'themes',
+    'zlib_ie', 'drawingfile_ie', 'themes', 'khmer_segmenter',
 ]);
 
 // Mirrors the otherFiles array in Gruntfile.js
@@ -58,6 +58,7 @@ const OTHER_FILES = [
             'Native/*.js',
             'libfont/engine/*',
             'spell/spell/*',
+            'spell/khmer/*',
             'hash/hash/*',
             'zlib/engine/*',
             'serviceworker/*',
