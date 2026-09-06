@@ -6307,7 +6307,7 @@ function CDrawingDocument()
 		//console.log(ret);
 		return ret;
 	};
-	this.ToRendererPart = function (noBase64, isPrint)
+	this.ToRendererPart = function (noBase64, isPrint, pages)
 	{
 		var _this = this.printedDocument ? this.printedDocument.DrawingDocument : this;
 
@@ -6339,6 +6339,9 @@ function CDrawingDocument()
 
 		for (var i = start; i <= end; i++)
 		{
+			if (pages !== undefined && !pages[i])
+				continue;
+
 			var page = _this.m_arrPages[i];
 			renderer.BeginPage(page.width_mm, page.height_mm);
 			_this.m_oLogicDocument.DrawPage(i, renderer);
@@ -6363,7 +6366,8 @@ function CDrawingDocument()
 		}
 		
 		// TODO: Когда в интерфейсе появится флаг как писать заголовки послать его вторым параметром
-		renderer.AddHeadings(_this.m_oLogicDocument, true);
+		if (pages === undefined)
+			renderer.AddHeadings(_this.m_oLogicDocument, true);
 
 		if (noBase64) {
 			return renderer.Memory.GetData();
