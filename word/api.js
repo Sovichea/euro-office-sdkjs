@@ -6579,6 +6579,24 @@ background-repeat: no-repeat;\
                 this.exucuteHistoryEnd = false;
 			}
 		}
+
+		// The graphic object's bounds are only finalised once the action above has
+		// completed. Re-run CheckWH for the resized drawings so the ParaDrawing effect
+		// extent is recalculated from the new bounds, then re-layout the document so the
+		// drawing position is derived from those bounds. Without this a resized image keeps
+		// its pre-resize effect-extent padding: it ends up in an oversized (page-wide) cell
+		// and/or is offset (moved up/right by the stale padding) after saving and reopening.
+		var oResizedObjects = this.WordControl.m_oLogicDocument.DrawingObjects;
+		if (oResizedObjects && oResizedObjects.selectedObjects && oResizedObjects.selectedObjects.length > 0)
+		{
+			for (var nResized = 0; nResized < oResizedObjects.selectedObjects.length; ++nResized)
+			{
+				var oResizedParent = oResizedObjects.selectedObjects[nResized].parent;
+				if (oResizedParent && oResizedParent.CheckWH)
+					oResizedParent.CheckWH();
+			}
+			this.WordControl.m_oLogicDocument.Recalculate();
+		}
 	};
 	asc_docs_api.prototype.set_Size                = function(width, height)
 	{
